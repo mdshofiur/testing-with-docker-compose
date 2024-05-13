@@ -169,8 +169,8 @@ services:
 volumes:
    certs:
       driver: local
-   # esdata01:
-   #    driver: local
+   esdata01:
+      driver: local
    local_pgdata:
       driver: local
    pgadmin-data:
