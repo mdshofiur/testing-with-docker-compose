@@ -58,7 +58,7 @@ services:
          - '5050:5050'
       environment:
          PGADMIN_DEFAULT_EMAIL: shofiurbd13@gmail.com
-         PGADMIN_DEFAULT_PASSWORD: 123456
+         PGADMIN_DEFAULT_PASSWORD: 12345
       volumes:
          - ./pgadmin-data:/var/lib/pgadmin
       depends_on:
