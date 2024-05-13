@@ -96,6 +96,26 @@ services:
       container_name: elasticsearch
       ports:
         - 9200:9200
+      volumes:
+        - ./elasticsearch:/usr/share/elasticsearch/data
+      environment:
+         - discovery.type=single-node
+         - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+         - "xpack.security.enabled=false"
+         - "xpack.monitoring.enabled=false"
+         - "xpack.graph.enabled=false"
+         - "xpack.watcher.enabled=false"
+         - "xpack.ml.enabled=false"
+         - "xpack.monitoring.collection.enabled=false"
+         - "xpack.security.authc.api_key.enabled=false"
+         - "xpack.security.authc.file.enabled=false"
+         - "xpack.security.authc.native.enabled=false"
+         - "xpack.security.authc.pki.enabled=false"
+         - "xpack.security.authc.ldap.enabled=false"
+         - "xpack.security.authc.saml.enabled=false"
+         - "xpack.security.authc.kerberos.enabled=false"
+         - "xpack.security.authc.token.enabled=false"
+         - "xpack.security.authc.oidc.enabled=false"
       
 
 
