@@ -11,6 +11,7 @@ services:
    # Zookeeper
    zookeeper:
     image: confluentinc/cp-zookeeper:latest
+    container_name: zookeeper-container
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
@@ -20,6 +21,7 @@ services:
    # Kafka
    kafka:
     image: confluentinc/cp-kafka:latest
+    container_name: kafka-container
     depends_on:
       - zookeeper
     ports:
