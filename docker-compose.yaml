@@ -74,14 +74,14 @@ services:
       volumes:
          - ./cassandra:/var/lib/cassandra
 
-   # Nginx
-   nginx:
-      image: nginx:latest
-      container_name: nginx-container
-      ports:
-         - '80:80'
-      volumes:
-         - ./nginx.conf:/etc/nginx/nginx.conf
+   # # Nginx
+   # nginx:
+   #    image: nginx:latest
+   #    container_name: nginx-container
+   #    ports:
+   #       - '80:80'
+   #    volumes:
+   #       - ./nginx.conf:/etc/nginx/nginx.conf
 
    # Redis
    redis:
