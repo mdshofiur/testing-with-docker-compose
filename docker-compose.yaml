@@ -8,25 +8,44 @@ services:
       ports:
          - '27017:27017'
 
-   # Kafka 1
-   kafka1:
-      image: wurstmeister/kafka:latest
-      container_name: kafka1-container
-      ports:
-         - '9092:9092'
-      environment:
-         KAFKA_ADVERTISED_HOST_NAME: localhost
-         KAFKA_CREATE_TOPICS: 'topic1:1:1,topic2:1:1'
-         KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+   # # Kafka 1
+   # kafka1:
+   #    image: wurstmeister/kafka:latest
+   #    container_name: kafka1-container
+   #    ports:
+   #       - '9092:9092'
+   #    environment:
+   #       KAFKA_ADVERTISED_HOST_NAME: localhost
+   #       KAFKA_CREATE_TOPICS: 'topic1:1:1,topic2:1:1'
+   #       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
 
-   # Zookeeper 1
-   zookeeper1:
-      image: wurstmeister/zookeeper:latest
-      container_name: zookeeper1-container
+   # # Zookeeper 1
+   # zookeeper1:
+   #    image: wurstmeister/zookeeper:latest
+   #    container_name: zookeeper1-container
+   #    ports:
+   #       - '2181:2181'
+   #    depends_on:
+   #       - kafka1
+   
+   #  ----------------------------
+   zookeeper2:
+      image: docker.io/bitnami/zookeeper:3.9
+      container_name: zookeeper2-container   
       ports:
-         - '2181:2181'
+         - '2182:2181'
+      environment:
+         - ALLOW_ANONYMOUS_LOGIN=yes
+      
+   kafka2:
+      image: docker.io/bitnami/kafka:3.4
+      container_name: kafka2-container
+      ports:
+         - '9093:9092'
+      environment:
+         - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper2:2181
       depends_on:
-         - kafka1
+         - zookeeper2
 
    # # Zookeeper
    # zookeeper:
@@ -85,7 +104,7 @@ services:
 
    # Cassandra
    cassandra:
-      image: cassandra:latest
+      image: cassandra:5.0
       container_name: cassandra-container
       ports:
          - '9042:9042'
