@@ -90,6 +90,17 @@ services:
       ports:
          - '6379:6379'
 
+
+   testelasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.15.2
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+    ports:
+      - "9200:9200"
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+  
    # Elasticsearch
    elasticsearch:
       image: docker.elastic.co/elasticsearch/elasticsearch:6.4.2
@@ -188,4 +199,6 @@ volumes:
    local_pgdata:
       driver: local
    pgadmin-data:
+      driver: local
+   esdata:
       driver: local
