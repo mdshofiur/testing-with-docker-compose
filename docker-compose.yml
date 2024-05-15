@@ -1,0 +1,35 @@
+version: '3'
+services:
+   seq:
+      image: datalust/seq:latest
+      ports:
+         - '80:80'
+         - '5341:5341'
+      environment:
+         ACCEPT_EULA: Y
+   
+   
+   postgres:
+      image: postgres
+      environment:
+         POSTGRES_USER: demouser
+         POSTGRES_PASSWORD: demopassword
+         POSTGRES_DB: demodatabase
+      ports:
+         - '5432:5432'
+
+   web:
+      hostname: localhost
+      build:
+         context: .
+         dockerfile: Dockerfile
+      environment:
+         - 'CONNECTIONSTRING=Server=postgres;User ID=demouser;Database=demodatabase;Password=demopassword'
+         - 'SERILOG__WRITETO__0__NAME=LiterateConsole'
+         - 'SERILOG__WRITETO__1__NAME=Seq'
+         - 'SERILOG__WRITETO__1__ARGS__SERVERURL=http://seq:5341'
+      links:
+       - 'postgres:postgres'
+       - 'seq:seq'
+      ports:
+         - '5000:80'
