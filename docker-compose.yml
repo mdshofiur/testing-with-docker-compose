@@ -18,18 +18,18 @@ services:
       ports:
          - '5432:5432'
 
-   web:
-      hostname: localhost
-      build:
-         context: .
-         dockerfile: Dockerfile
-      environment:
-         - 'CONNECTIONSTRING=Server=postgres;User ID=demouser;Database=demodatabase;Password=demopassword'
-         - 'SERILOG__WRITETO__0__NAME=LiterateConsole'
-         - 'SERILOG__WRITETO__1__NAME=Seq'
-         - 'SERILOG__WRITETO__1__ARGS__SERVERURL=http://seq:5341'
-      links:
-       - 'postgres:postgres'
-       - 'seq:seq'
-      ports:
-         - '5000:80'
+  #  web:
+  #     hostname: localhost
+  #     build:
+  #        context: .
+  #        dockerfile: Dockerfile
+  #     environment:
+  #        - 'CONNECTIONSTRING=Server=postgres;User ID=demouser;Database=demodatabase;Password=demopassword'
+  #        - 'SERILOG__WRITETO__0__NAME=LiterateConsole'
+  #        - 'SERILOG__WRITETO__1__NAME=Seq'
+  #        - 'SERILOG__WRITETO__1__ARGS__SERVERURL=http://seq:5341'
+  #     links:
+  #      - 'postgres:postgres'
+  #      - 'seq:seq'
+  #     ports:
+  #        - '5000:80'
