@@ -23,10 +23,10 @@ services:
          - 'TZ=UTC'
 
    grafana:
-      image: grafana/grafana
+      image: grafana/grafana:latest
       container_name: grafana
       ports:
-         - '30091:3000'
+         - '3000:3000'
       volumes:
         - ./grafana:/var/lib/grafana
 #    # Mailhog
