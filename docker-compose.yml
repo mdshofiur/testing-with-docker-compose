@@ -1,5 +1,6 @@
 version: '3'
 services:
+   # Seq
    seq:
       image: datalust/seq:latest
       ports:
@@ -9,119 +10,139 @@ services:
          ACCEPT_EULA: Y
          $HOST_PATH_TO_SEQ: /data
 
-   mailhog:
-      image: mailhog/mailhog
-      ports:
-         - '8025:8025' # Web UI
-         - '1025:1025' # SMTP
+      # prometheus
+   prometheus:
+      # image: prom/prometheus
+      image: ubuntu/prometheus
+      container_name: prometheus
       volumes:
-         - mailhog-data:data
-
-   # ELK Stack
-   elasticsearch:
-      image: elasticsearch:7.9.1
-      container_name: elasticsearch
+         - ./prom/prometheus.yml:/etc/prometheus/prometheus.yml
       ports:
-         - '9200:9200'
-         - '9300:9300'
-      volumes:
-         - test_data:/usr/share/elasticsearch/data
-         - ./elk-config/elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+         - '9090:9090'
       environment:
-         - discovery.type=single-node
-         - 'xpack.security.enabled=false'
-         - 'xpack.monitoring.enabled=false'
-         - 'xpack.graph.enabled=false'
-         - cluster.name=docker-cluster
-         - bootstrap.memory_lock=true
-         - transport.host=0.0.0.0
-      networks:
-         - elk
-
-   logstash:
-      image: logstash:7.9.1
-      container_name: logstash
-      volumes:
-         - ./elk-config/logstash/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
-         - ./elk-config/logstash/logstash.yml:/usr/share/logstash/config/logstash.yml
-         - ls_data:/usr/share/logstash/data
-      ports:
-         - '5000:5000'
-         - '9600:9600'
-      networks:
-         - elk
-      depends_on:
-         - elasticsearch
-
-   kinaba:
-      image: kibana:7.9.1
-      container_name: kibana
-      ports:
-         - '5601:5601'
-      volumes:
-         - ./elk-config/kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
-         - kb_data:/usr/share/kibana/data
-      networks:
-         - elk
-      depends_on:
-         - elasticsearch
-
-   # Loki
-   loki:
-      image: grafana/loki:2.0.0
-      container_name: loki
-      ports:
-         - '3100:3100'
-      command: -config.file=/etc/loki/local-config.yaml
-      networks:
-         - loki 
-   
-   promtail:
-      image: grafana/promtail:2.0.0
-      container_name: promtail
-      volumes:
-         - /var/log:/var/log
-      command: -config.file=/etc/promtail/config.yml
-      networks:
-         - loki
+         - 'TZ=UTC'
 
    grafana:
-      image: grafana/grafana:latest
+      image: grafana/grafana
+      container_name: grafana
       ports:
-         - '3000:3000'
-      networks:
-         - loki
-      environment:
-         GF_PATHS_PROVISIONING: /etc/grafana/provisioning
-         GF_AUTH_ANONYMOUS_ENABLED: 'true'
-         GF_AUTH_ANONYMOUS_ORG_ROLE: 'Admin'
-         
+         - '30091:3000'
+      volumes:
+        - ./grafana:/var/lib/grafana
+#    # Mailhog
+#    mailhog:
+#       image: mailhog/mailhog
+#       ports:
+#          - '8025:8025' # Web UI
+#          - '1025:1025' # SMTP
+#       volumes:
+#          - mailhog-data:data
 
-volumes:
-   test_data:
-   ls_data:
-   kb_data:
-   # postgres:
-   #    image: postgres
-   #    environment:
-   #       POSTGRES_USER: demouser
-   #       POSTGRES_PASSWORD: demopassword
-   #       POSTGRES_DB: demodatabase
-   #    ports:
-   #       - '5432:5432'
+#    # ELK Stack
+#    elasticsearch:
+#       image: elasticsearch:7.9.1
+#       container_name: elasticsearch
+#       ports:
+#          - '9200:9200'
+#          - '9300:9300'
+#       volumes:
+#          - test_data:/usr/share/elasticsearch/data
+#          - ./elk-config/elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+#       environment:
+#          - discovery.type=single-node
+#          - 'xpack.security.enabled=false'
+#          - 'xpack.monitoring.enabled=false'
+#          - 'xpack.graph.enabled=false'
+#          - cluster.name=docker-cluster
+#          - bootstrap.memory_lock=true
+#          - transport.host=0.0.0.0
+#       networks:
+#          - elk
 
-   #  web:
-   #     hostname: localhost
-   #     build:
-   #        context: .
-   #        dockerfile: Dockerfile
-   #     environment:
-   #        - 'CONNECTIONSTRING=Server=postgres;User ID=demouser;Database=demodatabase;Password=demopassword'
-   #        - 'SERILOG__WRITETO__0__NAME=LiterateConsole'
-   #        - 'SERILOG__WRITETO__1__NAME=Seq'
-   #        - 'SERILOG__WRITETO__1__ARGS__SERVERURL=http://seq:5341'
-   #     links:
-   #      - 'postgres:postgres'
-   #      - 'seq:seq'
-   #     ports:
-   #        - '5000:80'
+#    logstash:
+#       image: logstash:7.9.1
+#       container_name: logstash
+#       volumes:
+#          - ./elk-config/logstash/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+#          - ./elk-config/logstash/logstash.yml:/usr/share/logstash/config/logstash.yml
+#          - ls_data:/usr/share/logstash/data
+#       ports:
+#          - '5000:5000'
+#          - '9600:9600'
+#       networks:
+#          - elk
+#       depends_on:
+#          - elasticsearch
+
+#    kinaba:
+#       image: kibana:7.9.1
+#       container_name: kibana
+#       ports:
+#          - '5601:5601'
+#       volumes:
+#          - ./elk-config/kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
+#          - kb_data:/usr/share/kibana/data
+#       networks:
+#          - elk
+#       depends_on:
+#          - elasticsearch
+
+#    # Loki
+#    loki:
+#       image: grafana/loki:2.0.0
+#       container_name: loki
+#       ports:
+#          - '3100:3100'
+#       command: -config.file=/etc/loki/local-config.yaml
+#       networks:
+#          - loki
+
+#    promtail:
+#       image: grafana/promtail:2.0.0
+#       container_name: promtail
+#       volumes:
+#          - /var/log:/var/log
+#       command: -config.file=/etc/promtail/config.yml
+#       networks:
+#          - loki
+
+#    grafana:
+#       image: grafana/grafana:latest
+#       ports:
+#          - '3000:3000'
+#       networks:
+#          - loki
+#       environment:
+#          GF_PATHS_PROVISIONING: /etc/grafana/provisioning
+#          GF_AUTH_ANONYMOUS_ENABLED: 'true'
+#          GF_AUTH_ANONYMOUS_ORG_ROLE: 'Admin'
+
+# volumes:
+#    test_data:
+#    ls_data:
+#    kb_data:
+
+# postgres:
+#    image: postgres
+#    environment:
+#       POSTGRES_USER: demouser
+#       POSTGRES_PASSWORD: demopassword
+#       POSTGRES_DB: demodatabase
+#    ports:
+#       - '5432:5432'
+
+#  web:
+#     hostname: localhost
+#     build:
+#        context: .
+#        dockerfile: Dockerfile
+#     environment:
+#        - 'CONNECTIONSTRING=Server=postgres;User ID=demouser;Database=demodatabase;Password=demopassword'
+#        - 'SERILOG__WRITETO__0__NAME=LiterateConsole'
+#        - 'SERILOG__WRITETO__1__NAME=Seq'
+#        - 'SERILOG__WRITETO__1__ARGS__SERVERURL=http://seq:5341'
+#     links:
+#      - 'postgres:postgres'
+#      - 'seq:seq'
+#     ports:
+#        - '5000:80'
