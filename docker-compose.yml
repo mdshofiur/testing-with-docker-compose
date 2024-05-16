@@ -21,6 +21,8 @@ services:
          - '9090:9090'
       environment:
          - 'TZ=UTC'
+         - GF_AUTH_ANONYMOUS_ENABLED=true
+         - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
 
    grafana:
       image: grafana/grafana:latest
@@ -28,7 +30,7 @@ services:
       ports:
          - '3000:3000'
       volumes:
-        - ./grafana:/var/lib/grafana
+        - ./grafana-data/data:/var/lib/grafana
 #    # Mailhog
 #    mailhog:
 #       image: mailhog/mailhog
