@@ -18,8 +18,8 @@ scrape_configs:
     scheme: http
     static_configs:
       - targets:
-          # - host.docker.internal:9090
           - https://localhost:7152
+          # - host.docker.internal:9090
   # - job_name: prometheus
   #   static_configs:
   #     - targets:
