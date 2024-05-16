@@ -24,15 +24,19 @@ services:
 
    grafana:
       image: grafana/grafana:latest
+      user: "472"
       container_name: grafana
       ports:
          - '3000:3000'
       volumes:
         - ./grafana-data/data:/var/lib/grafana
+        - ./grafana-data/provisioning:/etc/grafana/provisioning
       environment:
          - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
          - GF_AUTH_ANONYMOUS_ENABLED=true
          - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+         - GF_USERS_ALLOW_SIGN_UP=false
+         - GF_SECURITY_ADMIN_PASSWORD=admin
 #    # Mailhog
 #    mailhog:
 #       image: mailhog/mailhog
