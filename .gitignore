@@ -3,3 +3,5 @@
 /esdata01
 /local_pgdata
 /pgadmin-data
+/grafana-data
+/grafana
