@@ -15,14 +15,26 @@ services:
    #       - /var/run/docker.sock:/var/run/docker.sock
    #       - ./config:/.config/jesseduffield/lazydocker
 
-   postgresql:
-      image: postgres:latest
-      container_name: postgresql-container
-      environment:
-         POSTGRES_DB: my_database
-         POSTGRES_USER: my_user
-         POSTGRES_PASSWORD: 12345
-      # volumes:
-      #    - ./local_pgdata:/var/lib/postgresql/data
+   # postgresql:
+   #    image: postgres:latest
+   #    container_name: postgresql-container
+   #    environment:
+   #       POSTGRES_DB: my_database
+   #       POSTGRES_USER: my_user
+   #       POSTGRES_PASSWORD: 12345
+   #    ports:
+   #       - '5432:5432'
+   #    volumes:
+   #       - ./local_pgdata:/var/lib/postgresql/data
+
+   cassandra:
+      image: cassandra:5.0
+      container_name: cassandra-container
       ports:
-         - '5432:5432'
+         - '9042:9042'
+      environment:
+         - CASSANDRA_USER=admin
+         - CASSANDRA_PASSWORD=admin
+      volumes:
+         - ./cassandra:/var/lib/cassandra
+         - ./cassandra-logs:/var/log/cassandra
