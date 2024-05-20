@@ -39,8 +39,14 @@ services:
    #       - ./cassandra:/var/lib/cassandra
    #       - ./cassandra-logs:/var/log/cassandra
 
-   redis:
-      image: redis:latest
-      container_name: redis-container
+   # redis:
+   #    image: redis:latest
+   #    container_name: redis-container
+   #    ports:
+   #       - '6379:6379'
+
+   nginx:
+      image: nginx:latest
+      container_name: nginx-container
       ports:
-         - '6379:6379'
+         - '80:80'
