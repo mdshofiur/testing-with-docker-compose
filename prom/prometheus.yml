@@ -10,7 +10,7 @@ alerting:
       static_configs:
         - targets: []
 scrape_configs:
-  - job_name: TrackMyAPIUsage
+  - job_name: dotnet application
     honor_timestamps: true
     scrape_interval: 15s
     scrape_timeout: 10s
@@ -18,7 +18,14 @@ scrape_configs:
     scheme: http
     static_configs:
       - targets:
-          - host.docker.internal:7152
+          - host.docker.internal:8080
+  - job_name: prometheus
+    static_configs:
+      - targets: ['localhost:9090']
+  - job_name: node-exporter
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['node-exporter:9100']  
           # - host.docker.internal:9090
   # - job_name: prometheus
   #   static_configs:

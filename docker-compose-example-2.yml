@@ -1,0 +1,192 @@
+version: '3'
+services:
+   # ------ Version 3 ------
+   # Seq
+   seq:
+      image: datalust/seq:latest
+      ports:
+         - '80:80'
+         - '5341:5341'
+      environment:
+         ACCEPT_EULA: Y
+         $HOST_PATH_TO_SEQ: /data
+
+   # ----- Version 2-----
+   # prometheus
+   prometheus:
+      image: prom/prometheus:latest
+      container_name: prometheus
+      command:
+         - '--config.file=/etc/prometheus/prometheus.yml'
+         - '--storage.tsdb.path=/prometheus'
+         - '--web.console.libraries=/etc/prometheus/console_libraries'
+         - '--web.console.templates=/etc/prometheus/consoles'
+         - '--web.enable-lifecycle'
+      volumes:
+         - ./prom/prometheus.yml:/etc/prometheus/prometheus.yml
+         - ./data:/prometheus
+      ports:
+         - '9090:9090'
+      environment:
+         - 'TZ=UTC'
+
+   # grafana
+   grafana:
+      image: grafana/grafana:latest
+      container_name: grafana
+      ports:
+         - '3000:3000'
+      volumes:
+         - ./grafana-data/data:/var/lib/grafana
+         - ./grafana-data/provisioning:/etc/grafana/provisioning
+         - ./grafana:/etc/grafana/provisioning/datasources
+      environment:
+         - GF_SECURITY_ADMIN_USER=admin
+         - GF_SECURITY_ADMIN_PASSWORD=admin
+         - GF_USERS_ALLOW_SIGN_UP=false
+
+   # aspdotnet
+   aspdotnet:
+      image: shafikur/aspdotnet-app:latest
+      container_name: aspdotnet
+      ports:
+         - '8080:8080'
+
+   # node-exporter
+   node-exporter:
+      image: prom/node-exporter:latest
+      container_name: node-exporter
+      volumes:
+         - /proc:/host/proc:ro
+         - /sys:/host/sys:ro
+         - /:/rootfs:ro
+      command:
+         - '--path.procfs=/host/proc'
+         - '--path.rootfs=/rootfs'
+         - '--path.sysfs=/host/sys'
+         - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+      expose:
+         - '9100'
+
+      #  ----- Version 1 -------
+
+      # - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
+      # - GF_AUTH_ANONYMOUS_ENABLED=true
+      # - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      # - GF_USERS_ALLOW_SIGN_UP=false
+#    mailhog:
+#       image: mailhog/mailhog
+#       ports:
+#          - '8025:8025' # Web UI
+#          - '1025:1025' # SMTP
+#       volumes:
+#          - mailhog-data:data
+
+#    # ELK Stack
+#    elasticsearch:
+#       image: elasticsearch:7.9.1
+#       container_name: elasticsearch
+#       ports:
+#          - '9200:9200'
+#          - '9300:9300'
+#       volumes:
+#          - test_data:/usr/share/elasticsearch/data
+#          - ./elk-config/elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+#       environment:
+#          - discovery.type=single-node
+#          - 'xpack.security.enabled=false'
+#          - 'xpack.monitoring.enabled=false'
+#          - 'xpack.graph.enabled=false'
+#          - cluster.name=docker-cluster
+#          - bootstrap.memory_lock=true
+#          - transport.host=0.0.0.0
+#       networks:
+#          - elk
+
+#    logstash:
+#       image: logstash:7.9.1
+#       container_name: logstash
+#       volumes:
+#          - ./elk-config/logstash/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+#          - ./elk-config/logstash/logstash.yml:/usr/share/logstash/config/logstash.yml
+#          - ls_data:/usr/share/logstash/data
+#       ports:
+#          - '5000:5000'
+#          - '9600:9600'
+#       networks:
+#          - elk
+#       depends_on:
+#          - elasticsearch
+
+#    kinaba:
+#       image: kibana:7.9.1
+#       container_name: kibana
+#       ports:
+#          - '5601:5601'
+#       volumes:
+#          - ./elk-config/kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
+#          - kb_data:/usr/share/kibana/data
+#       networks:
+#          - elk
+#       depends_on:
+#          - elasticsearch
+
+#    # Loki
+#    loki:
+#       image: grafana/loki:2.0.0
+#       container_name: loki
+#       ports:
+#          - '3100:3100'
+#       command: -config.file=/etc/loki/local-config.yaml
+#       networks:
+#          - loki
+
+#    promtail:
+#       image: grafana/promtail:2.0.0
+#       container_name: promtail
+#       volumes:
+#          - /var/log:/var/log
+#       command: -config.file=/etc/promtail/config.yml
+#       networks:
+#          - loki
+
+#    grafana:
+#       image: grafana/grafana:latest
+#       ports:
+#          - '3000:3000'
+#       networks:
+#          - loki
+#       environment:
+#          GF_PATHS_PROVISIONING: /etc/grafana/provisioning
+#          GF_AUTH_ANONYMOUS_ENABLED: 'true'
+#          GF_AUTH_ANONYMOUS_ORG_ROLE: 'Admin'
+
+# volumes:
+#    test_data:
+#    ls_data:
+#    kb_data:
+
+# postgres:
+#    image: postgres
+#    environment:
+#       POSTGRES_USER: demouser
+#       POSTGRES_PASSWORD: demopassword
+#       POSTGRES_DB: demodatabase
+#    ports:
+#       - '5432:5432'
+
+#  web:
+#     hostname: localhost
+#     build:
+#        context: .
+#        dockerfile: Dockerfile
+#     environment:
+#        - 'CONNECTIONSTRING=Server=postgres;User ID=demouser;Database=demodatabase;Password=demopassword'
+#        - 'SERILOG__WRITETO__0__NAME=LiterateConsole'
+#        - 'SERILOG__WRITETO__1__NAME=Seq'
+#        - 'SERILOG__WRITETO__1__ARGS__SERVERURL=http://seq:5341'
+#     links:
+#      - 'postgres:postgres'
+#      - 'seq:seq'
+#     ports:
+#        - '5000:80'
