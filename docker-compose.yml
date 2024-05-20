@@ -27,14 +27,20 @@ services:
    #    volumes:
    #       - ./local_pgdata:/var/lib/postgresql/data
 
-   cassandra:
-      image: cassandra:5.0
-      container_name: cassandra-container
+   # cassandra:
+   #    image: cassandra:5.0
+   #    container_name: cassandra-container
+   #    ports:
+   #       - '9042:9042'
+   #    environment:
+   #       - CASSANDRA_USER=admin
+   #       - CASSANDRA_PASSWORD=admin
+   #    volumes:
+   #       - ./cassandra:/var/lib/cassandra
+   #       - ./cassandra-logs:/var/log/cassandra
+
+   redis:
+      image: redis:latest
+      container_name: redis-container
       ports:
-         - '9042:9042'
-      environment:
-         - CASSANDRA_USER=admin
-         - CASSANDRA_PASSWORD=admin
-      volumes:
-         - ./cassandra:/var/lib/cassandra
-         - ./cassandra-logs:/var/log/cassandra
+         - '6379:6379'
