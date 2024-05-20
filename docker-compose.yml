@@ -15,42 +15,14 @@ services:
    #       - /var/run/docker.sock:/var/run/docker.sock
    #       - ./config:/.config/jesseduffield/lazydocker
 
-   # prometheus
-   prometheus:
-      image: prom/prometheus:latest
-      container_name: prometheus
-      command:
-         - '--config.file=/etc/prometheus/prometheus.yml'
-         - '--storage.tsdb.path=/prometheus'
-         - '--web.console.libraries=/etc/prometheus/console_libraries'
-         - '--web.console.templates=/etc/prometheus/consoles'
-         - '--web.enable-lifecycle'
-      volumes:
-         - ./prom/prometheus.yml:/etc/prometheus/prometheus.yml
-         - ./data:/prometheus
-      ports:
-         - '9090:9090'
+   postgresql:
+      image: postgres:latest
+      container_name: postgresql-container
       environment:
-         - 'TZ=UTC'
-
-   # grafana
-   grafana:
-      image: grafana/grafana:latest
-      container_name: grafana
+         POSTGRES_DB: my_database
+         POSTGRES_USER: my_user
+         POSTGRES_PASSWORD: 12345
+      # volumes:
+      #    - ./local_pgdata:/var/lib/postgresql/data
       ports:
-         - '3000:3000'
-      volumes:
-         - ./grafana-data/data:/var/lib/grafana
-         - ./grafana-data/provisioning:/etc/grafana/provisioning
-         - ./grafana:/etc/grafana/provisioning/datasources
-      environment:
-         - GF_SECURITY_ADMIN_USER=admin
-         - GF_SECURITY_ADMIN_PASSWORD=admin
-         - GF_USERS_ALLOW_SIGN_UP=false
-
-   # aspdotnet
-   aspdotnet:
-      image: shafikur/aspdotnet-app:latest
-      container_name: aspdotnet
-      ports:
-         - '8080:8080'
+         - '5432:5432'
