@@ -39,16 +39,51 @@ services:
    #       - ./cassandra:/var/lib/cassandra
    #       - ./cassandra-logs:/var/log/cassandra
 
-   redis:
-      image: redis:latest
-      container_name: redis-container
-      ports:
-         - '6379:6379'
-      environment:
-         - REDIS_LOG_LEVEL=notic
+   # redis:
+   #    image: redis:latest
+   #    container_name: redis-container
+   #    ports:
+   #       - '6379:6379'
+   #    environment:
+   #       - REDIS_LOG_LEVEL=notic
 
-   nginx:
-      image: nginx:latest
-      container_name: nginx-container
+   # nginx:
+   #    image: nginx:latest
+   #    container_name: nginx-container
+   #    ports:
+   #       - '80:80'
+   
+   
+   # zookeeper
+   zookeeper:
+      image: docker.io/bitnami/zookeeper:3.9
+      container_name: zookeeper-container   
       ports:
-         - '80:80'
+         - '2182:2181'
+      environment:
+         - ALLOW_ANONYMOUS_LOGIN=yes
+
+   # kafka 
+   kafka:
+      image: docker.io/bitnami/kafka:3.4
+      container_name: kafka-container
+      ports:
+         - '9093:9092'
+      environment:
+         - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+      depends_on:
+         - zookeeper
+   
+   # kafka-ui
+   kafka-ui:
+      image: provectuslabs/kafka-ui:latest
+      container_name: kafka-ui-container
+      ports:
+         - '8090:8080'
+      environment:
+         - KAFKA_CLUSTERS_0_NAME=local
+         - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka2:9092
+         - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper2:2181
+      depends_on:
+         - kafka
+         - zookeeper
