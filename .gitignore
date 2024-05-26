@@ -5,3 +5,5 @@
 /pgadmin-data
 /grafana-data
 /grafana
+/data
+/elasticsearch
